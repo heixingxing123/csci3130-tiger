@@ -68,7 +68,6 @@ const LoginPage = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    <p>TEST PASSWORD: aaaa1A@a</p>
 
                     <button type="submit">Login</button>
                 </form>
