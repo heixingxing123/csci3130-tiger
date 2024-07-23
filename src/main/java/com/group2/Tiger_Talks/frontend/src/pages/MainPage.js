@@ -8,48 +8,50 @@ import FriendRecommendations from "../components/FriendRecommendations";
 import "../assets/styles/Main.css";
 import axios from "axios";
 import { formatPost } from "./../utils/formatPost";
+
 const MainPage = () => {
 	const user = useSelector((state) => state.user.user);
 	const dispatch = useDispatch();
 	const [message, setMessage] = useState("");
 	const [posts, setPosts] = useState([]);
-	const [reload, setReload] = useState(false);
-
 	const [isNavVisible, setIsNavVisible] = useState(false);
+	const [dataLoaded, setDataLoaded] = useState(false);
 
 	useEffect(() => {
-		axios
-			.get(`http://localhost:8085/posts/getPostForUserAndFriends/${user.email}`)
-			.then((response) => {
+		const fetchCurrentUser = async (userEmail) => {
+			try {
+				const response = await axios.get(
+					`http://localhost:8085/api/user/getByEmail/${userEmail}`
+				);
+				const data = response.data;
+				dispatch({ type: "SET_USER", payload: data });
+			} catch (error) {
+				console.error("Error fetching profile user data:", error);
+			}
+		};
+
+		const fetchPosts = async (userEmail) => {
+			try {
+				const response = await axios.get(
+					`http://localhost:8085/posts/getPostForUserAndFriends/${userEmail}`
+				);
 				const transformedPosts = formatPost(response.data);
 				setPosts(transformedPosts);
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error("There was an error on posts!", error);
+			}
+		};
+
+		if (user && !dataLoaded) {
+			fetchCurrentUser(user.email).then(() => {
+				fetchPosts(user.email).then(() => setDataLoaded(true));
 			});
-	}, [user, reload]);
-
-	useEffect(() => {
-		if (user && reload) {
-			const fetchCurrentUser = async (userEmail) => {
-				try {
-					const response = await axios.get(
-						`http://localhost:8085/api/user/getByEmail/${userEmail}`
-					);
-					const data = response.data;
-					dispatch({ type: "SET_USER", payload: data });
-					setReload(false);
-				} catch (error) {
-					console.error("Error fetching profile user data:", error);
-				}
-			};
-			fetchCurrentUser(user.email);
 		}
-	}, [user, dispatch, reload]);
+	}, [user, dataLoaded, dispatch]);
 
-	const addPost = async (postContent, imageURL, tags) => {
+	const addPost = async (postContent, imageURL) => {
 		if (!user) {
-			setMessage("User profile are not successfully loaded");
+			setMessage("User profile is not successfully loaded");
 			return;
 		}
 
@@ -62,18 +64,20 @@ const MainPage = () => {
 			associatedImageURL: imageURL,
 		};
 
-		// Save the new post to the database
-		await axios
-			.post("http://localhost:8085/posts/create", newPost)
-			.then((response) => {
-				const createdPost = response.data;
-				setPosts((prevPosts) => [createdPost, ...prevPosts]);
-				setReload(!reload);
-			})
-			.catch((error) => {
-				console.error("There was an error creating the post!", error);
-				setMessage("Error creating post");
-			});
+		try {
+			await axios.post("http://localhost:8085/posts/create", newPost);
+			// Refetch posts after adding a new one
+			const response = await axios.get(
+				`http://localhost:8085/posts/getPostForUserAndFriends/${user.email}`
+			);
+			const transformedPosts = formatPost(response.data);
+			setPosts(transformedPosts);
+			window.alert("Posted successfully");
+			window.location.reload();
+		} catch (error) {
+			console.error("There was an error creating the post!", error);
+			setMessage("Error creating post");
+		}
 	};
 
 	return (

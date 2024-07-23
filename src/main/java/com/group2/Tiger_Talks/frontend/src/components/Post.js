@@ -22,7 +22,7 @@ const Post = ({ post, user }) => {
 
 	const navigate = useNavigate();
 
-	useEffect(() => {}, [postComments, isEdited]);
+	useEffect(() => {}, [postComments, editedContent]);
 
 	const handleLike = async () => {
 		const postId = post.id || post.postId;
