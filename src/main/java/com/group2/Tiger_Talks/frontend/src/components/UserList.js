@@ -3,6 +3,8 @@ import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios';
 import "../assets/styles/UserList.css";
 
+const URL = process.env.REACT_APP_API_URL;
+
 const UserList = ({selectedUsers, setSelectedUsers, data, setData}) => {
     const user = useSelector((state) => state.user.user);
     const dispatch = useDispatch();
@@ -10,7 +12,7 @@ const UserList = ({selectedUsers, setSelectedUsers, data, setData}) => {
         try {
             const userToUpdate = data.find(user => user.email === email);
             const updatedUser = {...userToUpdate, userLevel: userToUpdate.userLevel === 'admin' ? 'user' : 'admin'};
-            await axios.put(`http://localhost:8085/api/user/update`, updatedUser);
+            await axios.put(`${URL}/api/user/update`, updatedUser);
 
             setData(prevData =>
                 prevData.map(user =>

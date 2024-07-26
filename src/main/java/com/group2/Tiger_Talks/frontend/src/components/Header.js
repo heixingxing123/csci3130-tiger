@@ -1,5 +1,5 @@
 import React from "react";
-import NotificationButton from "./NotificationButton";
+import NotificationButton from "./Notification/NotificationButton";
 import SearchBar from "./SearchBar";
 import "../assets/styles/Header.css";
 

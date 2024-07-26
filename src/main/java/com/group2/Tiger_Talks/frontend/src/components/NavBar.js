@@ -3,9 +3,11 @@ import {useDispatch, useSelector} from "react-redux";
 import axios from "axios";
 import {NavLink, useNavigate} from "react-router-dom";
 import {FaHome, FaSignOutAlt, FaUser, FaUserShield} from "react-icons/fa";
-import GroupTab from "./GroupTab";
-import FriendsTab from "./FriendsTab";
+import GroupTab from "./Group/GroupTab";
+import FriendsTab from "./Friend/FriendsTab";
 import "../assets/styles/NavBar.css";
+
+const URL = process.env.REACT_APP_API_URL;
 
 const NavBar = () => {
     const dispatch = useDispatch();
@@ -14,7 +16,7 @@ const NavBar = () => {
     const handleLogOut = async () => {
         try {
             const response = await axios.post(
-                `http://localhost:8085/api/logIn/userLogOut?email=${user.email}`
+                `${URL}/api/logIn/userLogOut?email=${user.email}`
             );
             if (response.status === 200) {
                 dispatch({type: "SET_USER", payload: null});

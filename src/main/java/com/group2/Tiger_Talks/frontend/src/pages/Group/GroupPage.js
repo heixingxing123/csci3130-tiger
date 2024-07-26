@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import NavBar from "../../components/NavBar";
 import Header from "../../components/Header";
 import "../../assets/styles/GroupPage.css";
-import Group from "../../components/Group";
+import Group from "../../components/Group/Group";
 import SearchBar from "../../components/SearchBar";
 import { handleGetGroupUserIsMember } from "../../axios/GroupAxios";
 

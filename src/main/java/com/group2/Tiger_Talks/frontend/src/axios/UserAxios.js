@@ -11,3 +11,14 @@ export const findUsersByKeyword = (searchQuery, userEmail) => {
             throw error;
         });
 };
+
+export const getUserProfileByEmail = async (email) => {
+    try {
+        const response = await axios.get(`${URL}/api/user/getByEmail/${email}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+

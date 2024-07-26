@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import NavBar from "../components/NavBar";
-import Post from "../components/Post";
-import PostCreation from "../components/PostCreation";
-import FriendRecommendations from "../components/FriendRecommendations";
+import Post from "../components/Post/Post";
+import PostCreation from "../components/Post/PostCreation";
+import FriendRecommendations from "../components/Friend/FriendRecommendations";
 import "../assets/styles/Main.css";
 import axios from "axios";
-import { formatPost } from "./../utils/formatPost";
+import { formatPost } from "../utils/formatPost";
+
+const URL = process.env.REACT_APP_API_URL;
+
 const MainPage = () => {
 	const user = useSelector((state) => state.user.user);
 	const dispatch = useDispatch();
@@ -19,7 +22,7 @@ const MainPage = () => {
 
 	useEffect(() => {
 		axios
-			.get(`http://localhost:8085/posts/getPostForUserAndFriends/${user.email}`)
+			.get(`${URL}/posts/getPostForUserAndFriends/${user.email}`)
 			.then((response) => {
 				const transformedPosts = formatPost(response.data);
 				setPosts(transformedPosts);
@@ -34,7 +37,7 @@ const MainPage = () => {
 			const fetchCurrentUser = async (userEmail) => {
 				try {
 					const response = await axios.get(
-						`http://localhost:8085/api/user/getByEmail/${userEmail}`
+						`${URL}/api/user/getByEmail/${userEmail}`
 					);
 					const data = response.data;
 					setReload(false);
@@ -64,7 +67,7 @@ const MainPage = () => {
 		
 		// Save the new post to the database
 		await axios
-			.post("http://localhost:8085/posts/create", newPost)
+			.post("${URL}/posts/create", newPost)
 			.then((response) => {
 				const createdPost = response.data;
 				setPosts((prevPosts) => [createdPost, ...prevPosts]);

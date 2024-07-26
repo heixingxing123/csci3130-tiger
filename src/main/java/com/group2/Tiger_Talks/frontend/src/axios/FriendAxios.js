@@ -60,3 +60,26 @@ export const getAllFriendRequests = async (email) => {
         throw error;
     }
 };
+
+// This axio is used in ProfilePage
+export const areFriends = async (email1, email2) => {
+    try {
+        const response = await axios.get(`${URL}/friendships/areFriends/${email1}/${email2}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+// This axio is used in ProfilePage
+export const sendFriendshipRequest = async (senderEmail, receiverEmail) => {
+    try {
+        await axios.post(`${URL}/friendshipRequests/send`, null, {
+            params: { senderEmail, receiverEmail }
+        });
+    } catch (error) {
+        console.error("Error sending friend request:", error);
+        throw error;
+    }
+};
