@@ -6,7 +6,10 @@ import {userLogin} from "../../../axios/AuthenticationAxios";
 
 const LoginPage = () => {
 	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("aaaa1A@a");
+
+	// This will autofill the password you specified here
+	const [password, setPassword] = useState("");
+
 	const [error, setError] = useState("");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -60,7 +63,6 @@ const LoginPage = () => {
 						onChange={(e) => setPassword(e.target.value)}
 						required
 					/>
-					<p>TEST PASSWORD: aaaa1A@a</p>
 
 					<button type="submit">Login</button>
 				</form>
