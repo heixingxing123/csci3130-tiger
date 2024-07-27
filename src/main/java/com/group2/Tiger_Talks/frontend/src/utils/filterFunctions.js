@@ -17,8 +17,10 @@ export const filterUsers = (users, searchQuery, filterOption) => {
 	}
 
 	if (searchQuery) {
-		filteredUsers = filteredUsers.filter((user) =>
-			user.userName.toLowerCase().includes(searchQuery.toLowerCase())
+		filteredUsers = filteredUsers.filter(
+			(user) =>
+				user.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				user.email.toLowerCase().includes(searchQuery.toLowerCase())
 		);
 	}
 
