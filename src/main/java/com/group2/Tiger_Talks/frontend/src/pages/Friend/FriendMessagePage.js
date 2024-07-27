@@ -22,15 +22,22 @@ const FriendMessagePage = () => {
 	};
 
 	useEffect(() => {
+		const firstLoad = sessionStorage.getItem('firstLoad');
+		if (!firstLoad) {
+			sessionStorage.setItem('firstLoad', '1');
+			console.log('First load, reloading the page');
+			window.location.reload();
+		}
+	}, []);
+
+	useEffect(() => {
 		const fetchFriends = async () => {
 			if (user && user.email) {
 				try {
 					const responseData = await getAllFriendsByEmail(user.email);
 					if (responseData.length > 0) {
 						setFriends(responseData);
-						const savedFriendEmail = localStorage.getItem(
-							"selectedFriendEmail"
-						);
+						const savedFriendEmail = localStorage.getItem("selectedFriendEmail");
 						if (savedFriendEmail) {
 							const friend = responseData.find(
 								(f) => f.email === savedFriendEmail
@@ -67,6 +74,7 @@ const FriendMessagePage = () => {
 
         client.onConnect = () => {
             console.log("Connected to WebSocket");
+			setStompClient(client);
         };
 
 		client.onStompError = (frame) => {
@@ -74,8 +82,20 @@ const FriendMessagePage = () => {
 			console.error("Additional details: " + frame.body);
 		};
 
+		client.onWebSocketClose = (event) => {
+			console.error("WebSocket connection closed", event);
+		};
+
+		client.onWebSocketError = (event) => {
+			console.error("WebSocket connection error", event);
+		};
+
+		// Adding a delay before activating the client
+		setTimeout(() => {
+			client.activate();
+		}, 2000);
+
 		client.activate();
-		setStompClient(client);
 
         return () => {
             client.deactivate();
